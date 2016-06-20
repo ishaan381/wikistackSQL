@@ -17,18 +17,37 @@ module.exports = router;
 
 router.get('/', function (req, res) {
   var pages = Page.findAll()
-  .then(function(page) {
+  .then(function (page) {
     res.render('index', {pages: page});
   })
 
 });
 
 router.get('/users/', function (req, res, next) {
-
+  User.findAll()
+  .then(function (users){
+    res.render('users', {users: users})
+  }).catch(next)
 })
 
 router.get('/users/:id', function (req, res, next) {
+  var name, email;
 
+  User.findOne({
+    where: {
+      id: req.params.id
+    }
+  }).then(function(user){
+    name = user.name;
+    email = user.email;
+    return Page.findAll({
+      where: {
+        authorId: user.id
+      }
+    })
+  }).then (function (pages){
+    res.render('singleUser', {name: name, email: email, pages: pages});
+  })
 })
 
 router.post('/users/', function (req, res, next) {
@@ -56,10 +75,12 @@ router.get('/wiki/:pagetitle', function (req, res, next){
   var pageurl = Page.findOne({
     where: {
       urlTitle: req.params.pagetitle
-    }
+    }, include: [{
+      model: User, as: 'author'
+    }]
   })
-  .then(function (pageurl){
-    res.render('wikipage', {title: pageurl.title, content: pageurl.content})
+  .then(function (page){
+    res.render('wikipage', {title: page.title, content: page.content, author: page.author})
   })
   .catch(next)
 
