@@ -5,6 +5,7 @@ var swig = require('swig');
 var bodyParser = require('body-parser');
 var router = require('./routes/index');
 var path = require('path');
+var models = require('./models');
 
 
 app.engine('html', swig.renderFile); // how to render html templates
@@ -22,9 +23,15 @@ app.use(express.static(path.join(__dirname, '/public')));
 
 //app.use('/')
 
+models.db.sync({force: true})
+  .then(function(){
+    app.listen(3000, function(){
+      console.log('it worked');
+    });
+  })
+  .catch(console.error);
 
 
 
 
-
-app.listen(3000);
+// app.listen(3000);
