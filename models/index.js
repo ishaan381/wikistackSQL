@@ -28,7 +28,14 @@ var Page  = db.define('page', {
     route: function() {
       return '/wiki/' + this.urlTitle;
     }
-  }
+  },
+  hooks: {
+    beforeValidate: function(page, options) {
+      page.urlTitle = generateUrlTitle(page.title);
+      //options(null, page);
+      //console.log(page.title, page.urlTitle)
+    }
+}
 });
 
 var User = db.define('user', {
@@ -49,6 +56,9 @@ var User = db.define('user', {
 //   .then(function(){
 //     console.log('synced');
 //   })
+var generateUrlTitle = function(title) {
+    return title.replace(/\s+/g, '_').replace(/\W/g, '');
+}
 
 module.exports = {
   Page: Page,

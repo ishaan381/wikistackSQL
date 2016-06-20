@@ -51,13 +51,15 @@ router.get('/wiki/add/', function(req,res,next) {
 router.post('/wiki/', function(req, res, next) {
   var page = Page.build({
     title: req.body.title,
-    content: req.body.content,
-    urlTitle: req.body.title
+    content: req.body.content
   })
+  //console.log(page);
   page.save()
-    .then(function(){
+    .then(function(page){
       console.log('content saved')
+      console.log(page)
       res.redirect('/');
     })
 })
 //router.get('/', express.static(__dirname+ '/public'));
+
