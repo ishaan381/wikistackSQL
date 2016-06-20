@@ -8,9 +8,9 @@ var Page  = db.define('page', {
   },
   urlTitle: {
     type: Sequelize.STRING,
-    validate: {
-      isUrl: true
-    },
+    // validate: {
+    //   isUrl: true
+    // },
     allowNull: false
   },
   content: {
