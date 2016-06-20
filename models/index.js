@@ -52,6 +52,8 @@ var User = db.define('user', {
   }
 })
 
+Page.belongsTo(User, {as: 'author'});
+
 // db.sync({ force: true })
 //   .then(function(){
 //     console.log('synced');

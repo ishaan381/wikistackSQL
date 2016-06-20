@@ -16,7 +16,11 @@ module.exports = router;
 //router.use('/')
 
 router.get('/', function (req, res) {
-  res.render('index');
+  var pages = Page.findAll()
+  .then(function(page) {
+    res.render('index', {pages: page});
+  })
+
 });
 
 router.get('/users/', function (req, res, next) {
@@ -62,15 +66,28 @@ router.get('/wiki/:pagetitle', function (req, res, next){
 })
 
 router.post('/wiki/', function (req, res, next) {
-  var page = Page.build({
-    title: req.body.title,
-    content: req.body.content
+
+
+  var existing = User.findOrCreate({
+    where: {
+      name: req.body.name,
+      email: req.body.email
+    }
   })
-  //console.log(page);
-  page.save()
-    .then(function(page){
-      res.redirect(page.route);
+  .then(function(confirmedUser) {
+    var page = Page.build({
+      title: req.body.title,
+      content: req.body.content,
+      authorId: confirmedUser[0].dataValues.id
     })
+
+    return page.save()
+  })
+  .then(function(page){
+    res.redirect(page.route);
+  })
+  .catch(console.error)
 })
+
 //router.get('/', express.static(__dirname+ '/public'));
 
